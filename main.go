@@ -16,7 +16,7 @@ func main() {
 	fmt.Println(nodeInfo)
 
 	// Submitting some message.
-	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15)
+	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15) // TODO: Conseguir ler esse tipo de mensagem
 
 	// Reading some messages by an index.
 	messages := messages.GetAllMessagesByIndex(nodeURL, "LB_REPLY")
