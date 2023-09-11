@@ -30,26 +30,25 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 	var i uint32
 	var messages []Message
 
-	if (msgIdsResponse.Count > 0) {
+	if msgIdsResponse.Count > 0 {
 		for i = 0; i < msgIdsResponse.Count; i++ {
 			messageId, err := iotago.MessageIDFromHexString(msgIdsResponse.MessageIDs[i])
 			if err != nil {
 				log.Fatal(err)
 			}
-	
+
 			messageReturned, err := node.MessageByMessageID(context.Background(), messageId)
 			if err != nil {
 				log.Fatal(err)
 			}
-	
+
 			message := formatMessagePayload(*messageReturned)
-	
+
 			messages = append(messages, message)
 		}
 	} else {
 		log.Println("No messages with this index were found.")
 	}
-
 
 	return messages
 }

@@ -10,17 +10,15 @@ import (
 func main() {
 	nodeURL := "http://127.0.0.1:14265"
 
-	// Informações da Rede
+	// Network info
 	nodeInfo := infoNode.GetNodeInfo(nodeURL)
 
 	fmt.Println(nodeInfo)
 
-	// Transações
-
-	// Publicando uma transação
+	// Submitting some message.
 	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15)
 
-	// Lendo a transação pelo Index
+	// Reading some messages by an index.
 	messages := messages.GetAllMessagesByIndex(nodeURL, "LB_REPLY")
 
 	for _, v := range messages {

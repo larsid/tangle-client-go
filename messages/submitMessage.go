@@ -8,11 +8,11 @@ import (
 	iotago "github.com/iotaledger/iota.go/v2"
 )
 
-// Sends a new message to the Tangle Hornet Network, using a specific index. 
+// Sends a new message to the Tangle Hornet Network, using a specific index.
 func SubmitMessage(
-	nodeUrl string, 
-	index string, 
-	content string, 
+	nodeUrl string,
+	index string,
+	content string,
 	timeoutInSeconds int,
 ) bool {
 	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
@@ -23,7 +23,7 @@ func SubmitMessage(
 		return false
 	}
 
-	MessagePayload := &iotago.Indexation {
+	MessagePayload := &iotago.Indexation{
 		Index: []byte(index),
 		Data:  []byte(content),
 	}
