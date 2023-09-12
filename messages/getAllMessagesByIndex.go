@@ -76,6 +76,11 @@ func formatMessagePayload(message iotago.Message) Message {
 		} else {
 			log.Panic("Unexpected array length.")
 		}
+	} else if strings.Contains(payloadInString, "\t") {
+		payloadTemp := strings.Split(payloadInString, "\t")
+
+		index = payloadTemp[0]
+		content = payloadTemp[1]
 	} else {
 		log.Fatal("Malformed payload.")
 	}
