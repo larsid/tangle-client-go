@@ -2,6 +2,7 @@ package messages
 
 import (
 	"context"
+	"errors"
 	"log"
 	"strings"
 
@@ -42,7 +43,15 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 				log.Fatal(err)
 			}
 
-			message := formatMessagePayload(*messageReturned)
+			message, err := formatMessagePayload(*messageReturned, index)
+			if err != nil {
+				log.Println(err)
+
+				message = Message {
+					Index: "Error",
+					Content: err.Error(),
+				}
+			}
 
 			messages = append(messages, message)
 		}
@@ -54,7 +63,7 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 }
 
 // Formats the message payload into a custom message type.
-func formatMessagePayload(message iotago.Message) Message {
+func formatMessagePayload(message iotago.Message, messageIndex string) (Message, error) {
 	payloadInString := utils.SerializeMessagePayload(message.Payload, true)
 	index := ""
 	content := ""
@@ -81,12 +90,19 @@ func formatMessagePayload(message iotago.Message) Message {
 
 		index = payloadTemp[0]
 		content = payloadTemp[1]
+	} else if strings.Contains(payloadInString, messageIndex) {
+		payloadTemp := strings.Split(payloadInString, messageIndex)
+
+		index = messageIndex
+		content = payloadTemp[1]
 	} else {
-		log.Fatal("Malformed payload.")
+		return Message{}, errors.New("malformed payload")
 	}
 
-	return Message{
-		Index:   index,
-		Content: content,
+	formattedMessage := Message{
+		Index:   strings.Trim(index, "\f"),
+		Content: strings.Trim(content, "\f"),
 	}
+
+	return formattedMessage, nil
 }
