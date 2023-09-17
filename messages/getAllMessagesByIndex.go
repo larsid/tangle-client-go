@@ -64,7 +64,11 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 
 // Formats the message payload into a custom message type.
 func formatMessagePayload(message iotago.Message, messageIndex string) (Message, error) {
-	payloadInString := utils.SerializeMessagePayload(message.Payload, true)
+	payloadInString, err := utils.SerializeMessagePayload(message.Payload, true)
+	if err != nil {
+		return Message{}, err
+	}
+
 	index := ""
 	content := ""
 

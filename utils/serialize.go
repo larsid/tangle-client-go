@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
-	"log"
 
 	"github.com/iotaledger/hive.go/serializer"
 	iotago "github.com/iotaledger/iota.go/v2"
@@ -10,10 +10,10 @@ import (
 
 // Serializes a given message payload using iota.go package. You can turn
 // on/off the debug messages.
-func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode bool) string {
+func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode bool) (string, error) {
 	messagePayloadSerialized, err := messagePayload.Serialize(serializer.DeSeriModePerformLexicalOrdering)
 	if err != nil {
-		log.Fatal("Unable to serialize the given message payload.")
+		return "", errors.New("unable to serialize the given message payload")
 	}
 
 	messagePayloadInString := string(messagePayloadSerialized)
@@ -23,15 +23,15 @@ func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode b
 		fmt.Printf("Message in string: %s\n\n", messagePayloadInString)
 	}
 
-	return messagePayloadInString
+	return messagePayloadInString, nil
 }
 
 // Serializes a given message using iota.go package. You can turn on/off the
 // debug messages.
-func SerializeMessage(message iotago.Message, debugMode bool) string {
+func SerializeMessage(message iotago.Message, debugMode bool) (string, error) {
 	messageSerialized, err := message.Serialize(serializer.DeSeriModePerformLexicalOrdering)
 	if err != nil {
-		log.Fatal("Unable to serialize the given message.")
+		return "", errors.New("Unable to serialize the given message")
 	}
 
 	messageInString := string(messageSerialized)
@@ -41,5 +41,5 @@ func SerializeMessage(message iotago.Message, debugMode bool) string {
 		fmt.Printf("Message in string: %s\n\n", messageInString)
 	}
 
-	return messageInString
+	return messageInString, nil
 }
