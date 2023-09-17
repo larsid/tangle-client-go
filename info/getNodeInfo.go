@@ -2,7 +2,7 @@ package info
 
 import (
 	"context"
-	"log"
+	"errors"
 
 	iotago "github.com/iotaledger/iota.go/v2"
 )
@@ -23,12 +23,12 @@ type Milestone struct {
 }
 
 // Get Tangle Hornet Network node information.
-func GetNodeInfo(nodeUrl string) NodeInfo {
+func GetNodeInfo(nodeUrl string) (NodeInfo, error) {
 	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
 
 	info, err := node.Info(context.Background())
 	if err != nil {
-		log.Fatal("Unable to get node information.")
+		return NodeInfo{}, errors.New("unable to get node information")
 	}
 
 	milestone := &Milestone{
@@ -37,7 +37,7 @@ func GetNodeInfo(nodeUrl string) NodeInfo {
 		LatestMilestoneTimestamp: info.LatestMilestoneTimestamp,
 	}
 
-	return NodeInfo{
+	nodeInfo := &NodeInfo{
 		Name:              info.Name,
 		NetworkId:         info.NetworkID,
 		Version:           info.Version,
@@ -45,4 +45,6 @@ func GetNodeInfo(nodeUrl string) NodeInfo {
 		Milestone:         *milestone,
 		IsHealthy:         info.IsHealthy,
 	}
+
+	return *nodeInfo, nil
 }
