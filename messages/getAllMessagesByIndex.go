@@ -16,7 +16,7 @@ type Message struct {
 }
 
 // Get all messages available on the node by a given index.
-func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
+func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
 
 	msgIdsResponse, err := node.MessageIDsByIndex(
@@ -25,7 +25,7 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 	)
 
 	if err != nil {
-		log.Fatal("Unable to get message IDs.")
+		return nil, errors.New("unable to get message IDs")
 	}
 
 	var i uint32
@@ -35,20 +35,20 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 		for i = 0; i < msgIdsResponse.Count; i++ {
 			messageId, err := iotago.MessageIDFromHexString(msgIdsResponse.MessageIDs[i])
 			if err != nil {
-				log.Fatal(err)
+				return nil, errors.New("unable to convert message ID from hex to message ID representation")
 			}
 
 			messageReturned, err := node.MessageByMessageID(context.Background(), messageId)
 			if err != nil {
-				log.Fatal(err)
+				return nil, errors.New("unable to get message by given message ID")
 			}
 
 			message, err := formatMessagePayload(*messageReturned, index)
 			if err != nil {
 				log.Println(err)
 
-				message = Message {
-					Index: "Error",
+				message = Message{
+					Index:   "Error",
 					Content: err.Error(),
 				}
 			}
@@ -59,7 +59,7 @@ func GetAllMessagesByIndex(nodeUrl string, index string) []Message {
 		log.Println("No messages with this index were found.")
 	}
 
-	return messages
+	return messages, nil
 }
 
 // Formats the message payload into a custom message type.
