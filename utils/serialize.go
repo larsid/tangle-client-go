@@ -31,7 +31,7 @@ func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode b
 func SerializeMessage(message iotago.Message, debugMode bool) (string, error) {
 	messageSerialized, err := message.Serialize(serializer.DeSeriModePerformLexicalOrdering)
 	if err != nil {
-		return "", errors.New("Unable to serialize the given message")
+		return "", errors.New("unable to serialize the given message")
 	}
 
 	messageInString := string(messageSerialized)
