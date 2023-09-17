@@ -10,11 +10,6 @@ import (
 	iotago "github.com/iotaledger/iota.go/v2"
 )
 
-type Message struct {
-	Index   string `json:"index"`
-	Content string `json:"content"`
-}
-
 // Get all messages available on the node by a given index.
 func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
@@ -52,6 +47,8 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 					Content: err.Error(),
 				}
 			}
+
+			SanitizeMessage(&message)
 
 			messages = append(messages, message)
 		}
