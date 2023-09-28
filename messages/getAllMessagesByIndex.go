@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
-	"strings"
 
-	"github.com/allancapistrano/tangle-client-go/utils"
 	iotago "github.com/iotaledger/iota.go/v2"
 )
 
@@ -28,17 +26,10 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 
 	if msgIdsResponse.Count > 0 {
 		for i = 0; i < msgIdsResponse.Count; i++ {
-			messageId, err := iotago.MessageIDFromHexString(msgIdsResponse.MessageIDs[i])
-			if err != nil {
-				return nil, errors.New("unable to convert message ID from hex to message ID representation")
-			}
+			var message Message
 
-			messageReturned, err := node.MessageByMessageID(context.Background(), messageId)
-			if err != nil {
-				return nil, errors.New("unable to get message by given message ID")
-			}
+			messageReturned, err := getMessageByMessageID(nodeUrl, msgIdsResponse.MessageIDs[i])
 
-			message, err := formatMessagePayload(*messageReturned, index)
 			if err != nil {
 				log.Println(err)
 
@@ -46,64 +37,26 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 					Index:   "Error",
 					Content: err.Error(),
 				}
+			} else {
+				message, err = formatMessagePayload(*messageReturned, index)
+
+				if err != nil {
+					log.Println(err)
+
+					message = Message{
+						Index:   "Error",
+						Content: err.Error(),
+					}
+				} else {
+					sanitizeMessage(&message)
+
+					messages = append(messages, message)
+				}
 			}
-
-			SanitizeMessage(&message)
-
-			messages = append(messages, message)
 		}
 	} else {
 		log.Println("No messages with this index were found.")
 	}
 
 	return messages, nil
-}
-
-// Formats the message payload into a custom message type.
-func formatMessagePayload(message iotago.Message, messageIndex string) (Message, error) {
-	payloadInString, err := utils.SerializeMessagePayload(message.Payload, true)
-	if err != nil {
-		return Message{}, err
-	}
-
-	index := ""
-	content := ""
-
-	if strings.Contains(payloadInString, "/") {
-		payloadTemp := strings.Split(payloadInString, "/")
-
-		index = payloadTemp[0]
-		content = payloadTemp[1]
-	} else if strings.Contains(payloadInString, "\v") {
-		payloadTemp := strings.Split(payloadInString, "\v")
-
-		if len(payloadTemp) == 2 {
-			index = payloadTemp[0]
-			content = payloadTemp[1]
-		} else if len(payloadTemp) == 3 {
-			index = payloadTemp[1]
-			content = payloadTemp[2]
-		} else {
-			return Message{}, errors.New("unexpected array length")
-		}
-	} else if strings.Contains(payloadInString, "\t") {
-		payloadTemp := strings.Split(payloadInString, "\t")
-
-		index = payloadTemp[0]
-		content = payloadTemp[1]
-	} else if strings.Contains(payloadInString, messageIndex) {
-		payloadTemp := strings.Split(payloadInString, messageIndex)
-
-		index = messageIndex
-		content = payloadTemp[1]
-	} else {
-		return Message{}, errors.New("malformed payload")
-	}
-
-	formattedMessage := Message{
-		Index:   strings.Trim(index, "\f"),
-		Content: strings.Trim(content, "\f"),
-	}
-
-	return formattedMessage, nil
 }

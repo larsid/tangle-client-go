@@ -24,13 +24,25 @@ func main() {
 	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15)
 
 	// Reading some messages by an index.
-	messages, err := messages.GetAllMessagesByIndex(nodeURL, "LB_ENTRY_REPLY")
+	messagesByIndex, err := messages.GetAllMessagesByIndex(nodeURL, "LB_ENTRY_REPLY")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, v := range messages {
+	for _, v := range messagesByIndex {
 		fmt.Println([]byte(strings.Trim(v.Content, "\t")))
 		fmt.Printf("Index: %s | Content: %s\n", v.Index, v.Content)
 	}
+
+	messageID := "9597556533c5e91112c0b02244799a4d308ca007486e8e844d5d78b0f298b667"
+
+	message, err := messages.GetMessageFormattedByMessageID(
+		nodeURL,
+		messageID,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(message.Index)
+	fmt.Println(message.Content)
 }
