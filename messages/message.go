@@ -4,9 +4,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/allancapistrano/tangle-client-go/utils"
-
 	iotago "github.com/iotaledger/iota.go/v2"
+
+	"github.com/allancapistrano/tangle-client-go/utils"
 )
 
 type Message struct {
