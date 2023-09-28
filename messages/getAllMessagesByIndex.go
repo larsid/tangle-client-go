@@ -28,17 +28,10 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 
 	if msgIdsResponse.Count > 0 {
 		for i = 0; i < msgIdsResponse.Count; i++ {
-			messageId, err := iotago.MessageIDFromHexString(msgIdsResponse.MessageIDs[i])
-			if err != nil {
-				return nil, errors.New("unable to convert message ID from hex to message ID representation")
-			}
+			var message Message
 
-			messageReturned, err := node.MessageByMessageID(context.Background(), messageId)
-			if err != nil {
-				return nil, errors.New("unable to get message by given message ID")
-			}
+			messageReturned, err := getMessageByMessageID(nodeUrl, msgIdsResponse.MessageIDs[i])
 
-			message, err := formatMessagePayload(*messageReturned, index)
 			if err != nil {
 				log.Println(err)
 
@@ -46,11 +39,22 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 					Index:   "Error",
 					Content: err.Error(),
 				}
+			} else {
+				message, err = formatMessagePayload(*messageReturned, index)
+
+				if err != nil {
+					log.Println(err)
+
+					message = Message{
+						Index:   "Error",
+						Content: err.Error(),
+					}
+				} else {
+					SanitizeMessage(&message)
+
+					messages = append(messages, message)
+				}
 			}
-
-			SanitizeMessage(&message)
-
-			messages = append(messages, message)
 		}
 	} else {
 		log.Println("No messages with this index were found.")
