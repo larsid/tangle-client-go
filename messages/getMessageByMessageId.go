@@ -50,7 +50,7 @@ func GetMessageFormattedByMessageID(nodeUrl string, messageIdHex string) (Messag
 			}
 		}
 
-		SanitizeMessage(&message)
+		sanitizeMessage(&message)
 	}
 
 	return message, nil

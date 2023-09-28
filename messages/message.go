@@ -8,7 +8,7 @@ type Message struct {
 }
 
 // Sanitizes a message.
-func SanitizeMessage(message *Message) {
+func sanitizeMessage(message *Message) {
 	message.Content = utils.SanitizeString(message.Content)
 	message.Index = utils.SanitizeString(message.Index)
 }

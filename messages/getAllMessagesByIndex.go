@@ -50,7 +50,7 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 						Content: err.Error(),
 					}
 				} else {
-					SanitizeMessage(&message)
+					sanitizeMessage(&message)
 
 					messages = append(messages, message)
 				}
