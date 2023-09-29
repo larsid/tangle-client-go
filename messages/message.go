@@ -15,12 +15,19 @@ type Message struct {
 }
 
 // Sanitizes a message.
+//
+// Deprecated: sanitizeMessage exists for historical compatibility
+// and should not be used. You no longer need to sanitize a message.
 func sanitizeMessage(message *Message) {
 	message.Content = utils.SanitizeString(message.Content)
 	message.Index = utils.SanitizeString(message.Index)
 }
 
 // Formats the message payload into a custom message type.
+//
+// Deprecated: formatMessagePayload exists for historical compatibility
+// and should not be used. You no longer need to format a message payload
+// because now Indexation payload is used.
 func formatMessagePayload(message iotago.Message, messageIndex string) (Message, error) {
 	payloadInString, err := utils.SerializeMessagePayload(message.Payload, true)
 	if err != nil {
@@ -32,6 +39,11 @@ func formatMessagePayload(message iotago.Message, messageIndex string) (Message,
 
 	if strings.Contains(payloadInString, "/") {
 		payloadTemp := strings.Split(payloadInString, "/")
+
+		index = payloadTemp[0]
+		content = payloadTemp[1]
+	} else if strings.Contains(payloadInString, "|") {
+		payloadTemp := strings.Split(payloadInString, "|")
 
 		index = payloadTemp[0]
 		content = payloadTemp[1]
@@ -70,6 +82,10 @@ func formatMessagePayload(message iotago.Message, messageIndex string) (Message,
 }
 
 // Formats the message payload into a custom message type.
+//
+// Deprecated: formatMessagePayloadWithoutIndex exists for historical
+// compatibility and should not be used. You no longer need to format a message
+// payload because now Indexation payload is used.
 func formatMessagePayloadWithoutIndex(message *iotago.Message) (Message, error) {
 	payloadInString, err := utils.SerializeMessagePayload(message.Payload, true)
 	if err != nil {
