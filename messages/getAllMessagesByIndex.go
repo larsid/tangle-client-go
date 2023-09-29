@@ -38,21 +38,15 @@ func GetAllMessagesByIndex(nodeUrl string, index string) ([]Message, error) {
 					Content: err.Error(),
 				}
 			} else {
-				message, err = formatMessagePayload(*messageReturned, index)
+				indexationPayload := messageReturned.Payload.(*iotago.Indexation)
 
-				if err != nil {
-					log.Println(err)
-
-					message = Message{
-						Index:   "Error",
-						Content: err.Error(),
-					}
-				} else {
-					sanitizeMessage(&message)
-
-					messages = append(messages, message)
+				message = Message{
+					Index:   string(indexationPayload.Index),
+					Content: string(indexationPayload.Data),
 				}
 			}
+
+			messages = append(messages, message)
 		}
 	} else {
 		log.Println("No messages with this index were found.")
