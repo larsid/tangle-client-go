@@ -10,6 +10,10 @@ import (
 
 // Serializes a given message payload using iota.go package. You can turn
 // on/off the debug messages.
+//
+// Deprecated: SerializeMessagePayload exists for historical compatibility
+// and should not be used. You no longer need to serialize a message payload
+// because now Indexation payload is used.
 func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode bool) (string, error) {
 	messagePayloadSerialized, err := messagePayload.Serialize(serializer.DeSeriModePerformLexicalOrdering)
 	if err != nil {
@@ -28,6 +32,10 @@ func SerializeMessagePayload(messagePayload serializer.Serializable, debugMode b
 
 // Serializes a given message using iota.go package. You can turn on/off the
 // debug messages.
+//
+// Deprecated: SerializeMessage exists for historical compatibility
+// and should not be used. You no longer need to serialize a message payload
+// because now Indexation payload is used.
 func SerializeMessage(message iotago.Message, debugMode bool) (string, error) {
 	messageSerialized, err := message.Serialize(serializer.DeSeriModePerformLexicalOrdering)
 	if err != nil {

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	infoNode "github.com/allancapistrano/tangle-client-go/info"
 	"github.com/allancapistrano/tangle-client-go/messages"
@@ -24,13 +23,12 @@ func main() {
 	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15)
 
 	// Reading some messages by an index.
-	messagesByIndex, err := messages.GetAllMessagesByIndex(nodeURL, "LB_ENTRY_REPLY")
+	messagesByIndex, err := messages.GetAllMessagesByIndex(nodeURL, "REP_EVALUATION")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, v := range messagesByIndex {
-		fmt.Println([]byte(strings.Trim(v.Content, "\t")))
 		fmt.Printf("Index: %s | Content: %s\n", v.Index, v.Content)
 	}
 
