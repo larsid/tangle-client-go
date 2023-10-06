@@ -10,8 +10,8 @@ import (
 )
 
 type Message struct {
-	Index   string `json:"index"`
-	Content string `json:"content"`
+	Index string `json:"index"`
+	Data  string `json:"data"`
 }
 
 // Sanitizes a message.
@@ -19,7 +19,7 @@ type Message struct {
 // Deprecated: sanitizeMessage exists for historical compatibility
 // and should not be used. You no longer need to sanitize a message.
 func sanitizeMessage(message *Message) {
-	message.Content = utils.SanitizeString(message.Content)
+	message.Data = utils.SanitizeString(message.Data)
 	message.Index = utils.SanitizeString(message.Index)
 }
 
@@ -74,8 +74,8 @@ func formatMessagePayload(message iotago.Message, messageIndex string) (Message,
 	}
 
 	formattedMessage := Message{
-		Index:   strings.Trim(index, "\f"),
-		Content: strings.Trim(content, "\f"),
+		Index: strings.Trim(index, "\f"),
+		Data:  strings.Trim(content, "\f"),
 	}
 
 	return formattedMessage, nil
@@ -122,8 +122,8 @@ func formatMessagePayloadWithoutIndex(message *iotago.Message) (Message, error) 
 	}
 
 	formattedMessage := Message{
-		Index:   strings.Trim(index, "\f"),
-		Content: strings.Trim(content, "\f"),
+		Index: strings.Trim(index, "\f"),
+		Data:  strings.Trim(content, "\f"),
 	}
 
 	return formattedMessage, nil

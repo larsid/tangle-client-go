@@ -34,15 +34,15 @@ func GetMessageFormattedByMessageID(nodeUrl string, messageIdHex string) (Messag
 		log.Println(err)
 
 		message = Message{
-			Index:   "Error",
-			Content: err.Error(),
+			Index: "Error",
+			Data:  err.Error(),
 		}
 	} else {
 		indexationPayload := messageReturned.Payload.(*iotago.Indexation)
 
 		message = Message{
-			Index:   string(indexationPayload.Index),
-			Content: string(indexationPayload.Data),
+			Index: string(indexationPayload.Index),
+			Data:  string(indexationPayload.Data),
 		}
 	}
 
