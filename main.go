@@ -19,8 +19,16 @@ func main() {
 
 	fmt.Println(nodeInfo)
 
+	// All Network info
+	allNodeInfo, err := infoNode.GetAllNodeInfo(nodeURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(allNodeInfo)
+
 	// Submitting some message.
-	// messages.SubmitMessage(nodeURL, "LB_REPLY", "{asdfghjkl}", 15)
+	messages.SubmitMessage(nodeURL, "LB_STATUS", "{\"available\":true,\"avgLoad\":3,\"createdAt\":1695652263921,\"group\":\"group3\",\"lastLoad\":4,\"publishedAt\":1695652267529,\"source\":\"source4\",\"type\":\"LB_STATUS\"}", 15)
 
 	// Reading some messages by an index.
 	messagesByIndex, err := messages.GetAllMessagesByIndex(nodeURL, "LB_STATUS")
