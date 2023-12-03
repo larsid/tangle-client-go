@@ -51,4 +51,11 @@ func main() {
 	}
 	fmt.Println(message.Index)
 	fmt.Println(message.Data)
+
+	// Reading max of three messages by an index.
+	limitedMessages, err := messages.GetLastHourMessagesByIndex(nodeURL, "92015a2d-4bae-428d-a428-6338f465e72c", 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(limitedMessages)
 }
