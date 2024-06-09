@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	infoNode "github.com/allancapistrano/tangle-client-go/info"
-	"github.com/allancapistrano/tangle-client-go/messages"
+	infoNode "github.com/larsid/tangle-client-go/info"
+	"github.com/larsid/tangle-client-go/messages"
 )
 
 func main() {

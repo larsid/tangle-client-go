@@ -9,7 +9,7 @@ To use the library, we recommend you update Go [to the latest stable version](ht
 ## Using the library
 
 ```powershell
-go get github.com/allancapistrano/tangle-client-go
+go get github.com/larsid/tangle-client-go
 ```
 ## License
 

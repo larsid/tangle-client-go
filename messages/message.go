@@ -6,7 +6,7 @@ import (
 
 	iotago "github.com/iotaledger/iota.go/v2"
 
-	"github.com/allancapistrano/tangle-client-go/utils"
+	"github.com/larsid/tangle-client-go/utils"
 )
 
 type Message struct {
