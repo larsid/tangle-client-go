@@ -3,8 +3,9 @@ package info
 import (
 	"context"
 	"errors"
+	"log"
 
-	iotago "github.com/iotaledger/iota.go/v2"
+	"github.com/larsid/tangle-client-go/client"
 )
 
 type AllNodeInfo struct {
@@ -42,13 +43,24 @@ type NodeInfoMilestone struct {
 }
 
 // Get Tangle Hornet Network node information.
-func GetNodeInfo(nodeUrl string) (NodeInfo, error) {
-	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
+func GetNodeInfo(ctx context.Context, nodeUrl string) (NodeInfo, error) {
+	node := client.ForURL(nodeUrl)
 
-	info, err := node.Info(context.Background())
+	log.Printf("[TANGLE-CLIENT] [INFO] GetNodeInfo: consultando nó em %s", nodeUrl)
+
+	info, err := node.Info(ctx)
 	if err != nil {
+		log.Printf("[TANGLE-CLIENT] [ERROR] GetNodeInfo: falha ao obter info do nó %s: %v", nodeUrl, err)
 		return NodeInfo{}, errors.New("unable to get node information")
 	}
+
+	log.Printf(
+		"[TANGLE-CLIENT] [INFO] GetNodeInfo: nó=%s healthy=%v pruning_index=%d latest_milestone=%d",
+		info.Name,
+		info.IsHealthy,
+		info.PruningIndex,
+		info.LatestMilestoneIndex,
+	)
 
 	milestone := &NodeInfoMilestone{
 		ConfirmedMilestoneIndex:  info.ConfirmedMilestoneIndex,
@@ -70,13 +82,24 @@ func GetNodeInfo(nodeUrl string) (NodeInfo, error) {
 }
 
 // Get all Tangle Hornet Network node information.
-func GetAllNodeInfo(nodeUrl string) (AllNodeInfo, error) {
-	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
+func GetAllNodeInfo(ctx context.Context, nodeUrl string) (AllNodeInfo, error) {
+	node := client.ForURL(nodeUrl)
 
-	info, err := node.Info(context.Background())
+	log.Printf("[TANGLE-CLIENT] [INFO] GetAllNodeInfo: consultando nó em %s", nodeUrl)
+
+	info, err := node.Info(ctx)
 	if err != nil {
+		log.Printf("[TANGLE-CLIENT] [ERROR] GetAllNodeInfo: falha ao obter info do nó %s: %v", nodeUrl, err)
 		return AllNodeInfo{}, errors.New("unable to get node information")
 	}
+
+	log.Printf(
+		"[TANGLE-CLIENT] [INFO] GetAllNodeInfo: nó=%s healthy=%v pruning_index=%d latest_milestone=%d",
+		info.Name,
+		info.IsHealthy,
+		info.PruningIndex,
+		info.LatestMilestoneIndex,
+	)
 
 	milestone := &NodeInfoMilestone{
 		ConfirmedMilestoneIndex:  info.ConfirmedMilestoneIndex,
