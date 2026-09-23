@@ -8,33 +8,38 @@ import (
 	"time"
 
 	iotago "github.com/iotaledger/iota.go/v2"
+	"github.com/larsid/tangle-client-go/client"
 )
 
-// Get a limited amount of messages created in the last hour, available on the 
+// Get a limited amount of messages created in the last hour, available on the
 // node by a given index.
-func GetLastHourMessagesByIndex(nodeUrl string, index string, maxMessages int) ([]Message, error) {
-	node := iotago.NewNodeHTTPAPIClient(nodeUrl)
+func GetLastHourMessagesByIndex(ctx context.Context, nodeUrl string, index string, maxMessages int) ([]Message, error) {
+	node := client.ForURL(nodeUrl)
+
+	log.Printf("[TANGLE-CLIENT] [INFO] GetLastHourMessagesByIndex: buscando IDs index=%s maxMessages=%d", index, maxMessages)
 
 	msgIdsResponse, err := node.MessageIDsByIndex(
-		context.Background(),
+		ctx,
 		[]byte(index),
 	)
 
 	if err != nil {
+		log.Printf("[TANGLE-CLIENT] [ERROR] GetLastHourMessagesByIndex: falha ao obter IDs index=%s: %v", index, err)
 		return nil, errors.New("unable to get message IDs")
 	}
 
-	var i uint32
+	log.Printf("[TANGLE-CLIENT] [INFO] GetLastHourMessagesByIndex: index=%s total_ids=%d", index, msgIdsResponse.Count)
+
 	var messages []Message
 
 	if msgIdsResponse.Count > 0 {
-		for i = 0; i < msgIdsResponse.Count; i++ {
+		for i := uint32(0); i < msgIdsResponse.Count; i++ {
 			var message Message
 
-			messageReturned, err := getMessageByMessageID(nodeUrl, msgIdsResponse.MessageIDs[i])
+			messageReturned, err := getMessageByMessageID(ctx, node, msgIdsResponse.MessageIDs[i])
 
 			if err != nil {
-				log.Println(err)
+				log.Printf("[TANGLE-CLIENT] [ERROR] GetLastHourMessagesByIndex: falha ao buscar messageId=%s index=%s: %v", msgIdsResponse.MessageIDs[i], index, err)
 
 				message = Message{
 					Index: "Error",
@@ -76,12 +81,13 @@ func GetLastHourMessagesByIndex(nodeUrl string, index string, maxMessages int) (
 			}
 		}
 
-		if (len(messages) == 0) {
-			log.Println("No messages have been created in the last hour.")
+		if len(messages) == 0 {
+			log.Printf("[TANGLE-CLIENT] [INFO] GetLastHourMessagesByIndex: nenhuma mensagem na última hora index=%s", index)
 		}
 	} else {
-		log.Println("No messages with this index were found.")
+		log.Printf("[TANGLE-CLIENT] [INFO] GetLastHourMessagesByIndex: nenhuma mensagem encontrada index=%s", index)
 	}
 
+	log.Printf("[TANGLE-CLIENT] [INFO] GetLastHourMessagesByIndex: index=%s mensagens_retornadas=%d", index, len(messages))
 	return messages, nil
 }
